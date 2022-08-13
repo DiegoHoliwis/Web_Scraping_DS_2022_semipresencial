@@ -67,4 +67,77 @@ remote_driver$findElement(using = 'id',
 
 # RUT
 
+remote_driver$findElement(using = 'id',
+                          value = 'rutCotizanteDueno')$sendKeysToElement(list(RUT))
 
+
+for (i in RUT %>% str_split('') %>% unlist()) {
+  remote_driver$findElement(using = 'id',
+                            value = 'rutCotizanteDueno')$sendKeysToElement(list(i))
+  Sys.sleep(runif(1,0.1,0.3))
+}
+
+# Nombre
+for (i in NOMBRE %>% str_split('') %>% unlist()) {
+  remote_driver$findElement(using = 'id',
+                            value = 'nombre')$sendKeysToElement(list(i))
+  Sys.sleep(runif(1,0.1,0.3))
+}
+
+# Fecha de nacimiento
+for (i in FechaN %>% str_split("") %>% unlist()) {
+  remote_driver$findElement(using = 'id',
+                            value = 'fechaNacimiento_input')$sendKeysToElement(list(i))
+  Sys.sleep(runif(1,0.1,0.3))
+}
+
+# Sexo
+if(SEXO == "Masculino"){
+  remote_driver$findElement(using = 'xpath', value = '//label[@for="sexo:0"]')$clickElement()
+}else{
+  remote_driver$findElement(using = 'xpath', value = '//label[@for="sexo:1"]')$clickElement()
+}
+
+# Email
+for (i in EMAIL %>% str_split("") %>% unlist()) {
+  remote_driver$findElement(using = 'id',
+                            value = 'email')$sendKeysToElement(list(i))
+  Sys.sleep(runif(1,0.1,0.3))
+}
+
+# Telefono
+for (i in TELEFONO %>% str_split("") %>% unlist()) {
+  remote_driver$findElement(using = 'id',
+                            value = 'telefono')$sendKeysToElement(list(i))
+  Sys.sleep(runif(1,0.1,0.3))
+}
+
+remote_driver$findElement(using = 'id',
+                          value = 'siguiente2_1')$clickElement()
+
+# Extraer información del cotizador
+tabla <- remote_driver$findElement(using = "id",
+                          value = "matriz")$getElementAttribute('innerHTML')[[1]] %>% 
+  read_html()
+
+precios <- tabla %>% 
+  html_table() %>% 
+  map_dfc(.f = function(x){
+    x %>% 
+      select(str_subset(names(.),'Deducible'))
+  }) %>% 
+  filter(`Deducible 0 UF` != 'Sin Producto')
+
+Compañia <- remote_driver$findElement(using = "xpath",
+                          value = '//div[@class = "column-table40"]')$getElementAttribute('innerHTML')[[1]] %>% 
+  read_html() %>% 
+  html_elements(xpath = '//tr[@class = "filaMatriz"]/td[1]/img') %>% 
+  html_attr('alt') %>% 
+  tibble(Compañia = .) %>% 
+  mutate(Compañia = Compañia %>% str_trim())
+
+
+precios %>% 
+  add_column(Compañia)
+
+# str_subset(c('Hola','Perro', 'Hola, cómo estas?'),'o')
