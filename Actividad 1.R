@@ -23,6 +23,31 @@ pagina %>%
   html_text2()
 
 
+# Extraer el titulo de todos los productos, forma difícil
+
+
+1:48 %>% 
+  map_chr(.f = function(x){
+    pagina %>% 
+      html_element(xpath = paste0('//ol[@class = "items_container"]/li[',x,']//p[@class = "promotion-item__title"]')) %>% 
+      html_text2()
+  })
+
+# Extraer el titulo de todos los productos, forma fácil
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
