@@ -70,6 +70,20 @@ pagina %>%
       if_else(is.na(.),'Sin envio gratis',.)
   })
 
+# map_int(.f = sum)
+# map_int(.f = function(x){sum(x,na.rm = TRUE)})
+
+perrito <- function(x){
+  pagina %>% 
+    html_element(.,xpath = paste0('//ol[@class = "items_container"]/li[',x,']//span[@class = "promotion-item__shipping"]')) %>% 
+    html_text2(.) %>% 
+    if_else(is.na(.),'Sin envio gratis',.)}
+
+1:length(Nombre) %>% 
+  map_chr(.f = perrito)
+
+
+
 
 
 
