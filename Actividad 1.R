@@ -1,6 +1,6 @@
 # Web scraping
 # Actividad 1
-
+library(purrr)
 library(tidyverse)
 library(rvest)
 # options(warn = -1)
@@ -35,9 +35,27 @@ pagina %>%
 
 # Extraer el titulo de todos los productos, forma fácil
 
+pagina %>% 
+  html_elements(xpath = '//p[@class = "promotion-item__title"]') %>% 
+  html_text2()
 
+# Precio antiguo
+pagina %>% 
+  html_elements(xpath = '//span[@class = "promotion-item__oldprice"]') %>% 
+  html_text2() %>% 
+  str_remove_all('\\$') %>% 
+  str_trim() %>% 
+  str_remove_all('\\.') %>% 
+  as.numeric()
 
-
+# Precio oferta
+pagina %>% 
+  html_elements(xpath = '//span[@class = "promotion-item__price"]') %>% 
+  html_text2() %>% 
+  str_remove_all('\\$') %>% 
+  str_trim() %>% 
+  str_remove_all('\\.') %>% 
+  as.numeric()
 
 
 
