@@ -12,4 +12,4 @@ driver <- RSelenium::rsDriver(browser = "chrome",
                               chromever = "104.0.5112.79")
 remote_driver <- driver[["client"]]
 
-
+remote_driver$navigate("https://www.santander.cl/cotizador-web/")
