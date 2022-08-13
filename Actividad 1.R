@@ -24,8 +24,6 @@ pagina %>%
 
 
 # Extraer el titulo de todos los productos, forma difícil
-
-
 1:48 %>% 
   map_chr(.f = function(x){
     pagina %>% 
@@ -34,13 +32,12 @@ pagina %>%
   })
 
 # Extraer el titulo de todos los productos, forma fácil
-
-pagina %>% 
+Nombre <- pagina %>% 
   html_elements(xpath = '//p[@class = "promotion-item__title"]') %>% 
   html_text2()
 
 # Precio antiguo
-pagina %>% 
+Precio_antiguo <- pagina %>% 
   html_elements(xpath = '//span[@class = "promotion-item__oldprice"]') %>% 
   html_text2() %>% 
   str_remove_all('\\$') %>% 
@@ -49,7 +46,7 @@ pagina %>%
   as.numeric()
 
 # Precio oferta
-pagina %>% 
+Precio_oferta <- pagina %>% 
   html_elements(xpath = '//span[@class = "promotion-item__price"]') %>% 
   html_text2() %>% 
   str_remove_all('\\$') %>% 
@@ -57,8 +54,21 @@ pagina %>%
   str_remove_all('\\.') %>% 
   as.numeric()
 
+# Envió gratis
 
+# Da error porque existen elementos sin envió gratis
+pagina %>% 
+  html_elements(xpath = '//span[@class = "promotion-item__shipping"]') %>% 
+  html_text2()
 
+# Forma difícil 
+1:length(Nombre) %>% 
+  map_chr(.f = function(x){
+    pagina %>% 
+      html_element(xpath = paste0('//ol[@class = "items_container"]/li[',x,']//span[@class = "promotion-item__shipping"]')) %>% 
+      html_text2() %>% 
+      if_else(is.na(.),'Sin envio gratis',.)
+  })
 
 
 
